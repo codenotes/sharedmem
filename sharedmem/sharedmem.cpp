@@ -72,8 +72,33 @@ extern "C"
 	//	return 0;
 	}
 
+	__declspec(dllexport) void addToSharedMap(int index, std::string property, char * sharedMapName, char * properMapName)
+	{
+		using namespace boost::interprocess;
+		typedef int    KeyType;
+		typedef std::string  MappedType;
+		typedef std::pair<const int, std::string> ValueType;
 
-	__declspec(dllexport) void mapclient(char * sharedMapName, char * properMapName)
+		//Alias an STL compatible allocator of for the map.
+		//This allocator will allow to place containers
+		//in managed shared memory segments
+		typedef allocator<ValueType, managed_shared_memory::segment_manager>
+			ShmemAllocator;
+		typedef map<KeyType, MappedType, std::less<KeyType>, ShmemAllocator> MyMap;
+
+		managed_shared_memory segment(open_only, sharedMapName);          //segment size in bytes
+		ShmemAllocator alloc_inst(segment.get_segment_manager());
+
+		MyMap *mymap = segment.find<MyMap>(properMapName).first;
+
+		//(std::less<int>() 			, alloc_inst);
+
+		(*mymap)[index] = property;
+
+
+	}
+
+	__declspec(dllexport) void mapclient(char * sharedMapName, char * properMapName, std::map<int,std::string> &yourmap)
 	{
 		using namespace boost::interprocess;
 		typedef int    KeyType;
@@ -93,11 +118,18 @@ extern "C"
 		MyMap *mymap = segment.find<MyMap>(properMapName).first;
 
 			//(std::less<int>() 			, alloc_inst);
+		
+		int i=0;
+
+		for (auto it = mymap->begin(); it != mymap->end(); it++)
+		{
+			yourmap[it->first] = it->second;
+			printf("got:%s\n", it->second.c_str());
+		}
 
 		
-		printf("got:%s\n",mymap->operator[](0).c_str());
-		printf("got:%s\n", mymap->operator[](1).c_str());
-		(*mymap)[2] = "dunno";
+		//printf("got:%s\n", mymap->operator[](1).c_str());
+		//(*mymap)[2] = "dunno";
 
 		//Find the vector using the c-string name
 		//MyVector *myvector = segment.find<MyVector>("MyVector").first;
