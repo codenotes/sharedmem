@@ -68,10 +68,7 @@ extern "C"
 		//Shared memory front-end that is able to construct objects
 		//associated with a c-string. Erase previous shared memory with the name
 		//to be used and create the memory segment at the specified address and initialize resources
-		managed_shared_memory segment
-		(create_only
-			, sharedMapName //segment name
-			, 65536);          //segment size in bytes
+		managed_shared_memory segment(create_only, sharedMapName , 65536);          //segment size in bytes
 
 							   //Note that map<Key, MappedType>'s value_type is std::pair<const Key, MappedType>,
 							   //so the allocator must allocate that pair.

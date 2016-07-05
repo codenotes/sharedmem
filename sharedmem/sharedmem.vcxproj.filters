@@ -38,8 +38,5 @@
     <ClCompile Include="sharedvector.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="sharedmap.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
 </Project>

@@ -177,7 +177,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
       </PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="sharedmap.cpp" />
     <ClCompile Include="sharedmem.cpp" />
     <ClCompile Include="sharedvector.cpp" />
     <ClCompile Include="stdafx.cpp" />

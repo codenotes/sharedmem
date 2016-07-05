@@ -5,6 +5,14 @@
 #include <iostream>
 #include <string>
 #include <map>
+
+#include <boost/interprocess/managed_shared_memory.hpp>
+#include <boost/interprocess/containers/map.hpp>
+#include <boost/interprocess/allocators/allocator.hpp>
+#include <functional>
+#include <utility>
+
+using namespace boost::interprocess;
 using namespace std;
 extern "C"
 {
@@ -19,6 +27,22 @@ extern "C"
 
 int main()
 {
+	/*const char * shm_name = "shared_memory_segment";
+	shared_memory_object::remove(shm_name);
+
+
+	try
+	{
+		managed_shared_memory segment(create_only, shm_name, 65536);
+	}
+	catch (boost::interprocess::interprocess_exception& e)
+	{
+		printf("Error opening %s\n", e.what());
+	}
+
+	return 0;
+*/
+	
 	//host("boobs");
 	std::map<int, std::string> map1;
 	map1[0] = "map1";
