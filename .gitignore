@@ -52,3 +52,4 @@ Makefile.in
 *.cmake
 **/*.dir
 /examples/audio plugin host/Builds/VisualStudio2015/*.opendb
+/ipch/CLIENT2-c9b15fc8

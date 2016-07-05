@@ -38,8 +38,22 @@ extern "C"
 
 	}
 
+	__declspec(dllexport) void initSharedMemoryMap(char * sharedMapName)
+	{
+		using namespace boost::interprocess;
 
-	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int, std::string> yourmap)
+		//Remove shared memory on construction and destruction
+		//struct shm_remove
+		//{ 
+		//	shm_remove() { shared_memory_object::remove("MySharedMemory"); }
+		//	~shm_remove() { shared_memory_object::remove("MySharedMemory"); }
+		//} remover;
+		shared_memory_object::remove(sharedMapName);
+
+	}
+
+
+	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, std::map<int, std::string> yourmap)
 	{
 		using namespace boost::interprocess;
 
@@ -84,7 +98,7 @@ extern "C"
 		//and the second one the allocator.
 		//This the same signature as std::map's constructor taking an allocator
 		MyMap *mymap =
-			segment.construct<MyMap>(properMapName)      //object name
+			segment.construct<MyMap>(sharedMapName)      //object name
 			(std::less<int>() //first  ctor parameter
 				, alloc_inst);     //second ctor parameter
 
@@ -129,7 +143,7 @@ extern "C"
 
 	}
 
-	__declspec(dllexport) void getSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int,std::string> &yourmap)
+	__declspec(dllexport) void getSharedMemoryMap(char * sharedMapName, std::map<int, std::string> &yourmap)
 	{
 		using namespace boost::interprocess;
 		typedef int    KeyType;
@@ -146,7 +160,7 @@ extern "C"
 		managed_shared_memory segment(open_only, sharedMapName );          //segment size in bytes
 		ShmemAllocator alloc_inst(segment.get_segment_manager());
 
-		MyMap *mymap = segment.find<MyMap>(properMapName).first;
+		MyMap *mymap = segment.find<MyMap>(sharedMapName).first;
 
 			//(std::less<int>() 			, alloc_inst);
 		

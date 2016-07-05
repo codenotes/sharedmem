@@ -13,8 +13,8 @@ extern "C"
 	int client(char *sharedMemName, char * properVectorName);
 	int host(char *sharedMemName, char * properVectorName);
 	void tearDown(char *sharedMemName);
-	void getSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int, std::string> &yourmap);
-	void setSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int, std::string> yourmap);
+	void getSharedMemoryMap(char * sharedMapName, std::map<int, std::string> &yourmap);
+	void setSharedMemoryMap(char * sharedMapName, std::map<int, std::string> yourmap);
 	void addToSharedMap(int index, std::string property, char * sharedMapName, char * properMapName);
 }
 
@@ -23,14 +23,19 @@ int main()
 {
 	int x;
 
-	addToSharedMap(5, "greg", "boobs", "boobMap");
+	//addToSharedMap(5, "greg", "boobs", "boobMap");
 	std::map<int, std::string> mymap;
 
-	getSharedMemoryMap("boobs","boobMap",mymap);
+	getSharedMemoryMap("boobs1",mymap);
 	cout << mymap.size() << endl;
 
+	getSharedMemoryMap("boobs2", mymap);
+	cout << mymap.size() << endl;
+
+
+
 	cin >> x;
-	//tearDown("boobs");
+	//tearDown("boobs");	
     return 0;
 }
 
