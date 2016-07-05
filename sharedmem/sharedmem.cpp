@@ -56,7 +56,7 @@ extern "C"
 	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, std::map<int, std::string> yourmap)
 	{
 		using namespace boost::interprocess;
-
+		auto ln = yourmap.size();
 		//Remove shared memory on construction and destruction
 		//struct shm_remove
 		//{ 
@@ -106,6 +106,7 @@ extern "C"
 		/*for (int i = 0; i < 100; ++i) {
 			mymap->insert(std::pair<const int, float>(i, (float)i));
 		}*/
+		
 		for (auto it = yourmap.begin(); it != yourmap.end(); it++)
 		{
 			mymap->insert(std::pair<const int, std::string>(it->first, it->second));
