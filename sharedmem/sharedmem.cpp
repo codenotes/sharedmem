@@ -11,7 +11,35 @@
 extern "C"
 {
 
-	__declspec(dllexport) void maphost(char * sharedMapName, char * properMapName)
+	__declspec(dllexport) void clearmap(char * sharedMapName, char * properMapName)
+	{
+
+		using namespace boost::interprocess;
+		typedef int    KeyType;
+		typedef std::string  MappedType;
+		typedef std::pair<const int, std::string> ValueType;
+
+		//Alias an STL compatible allocator of for the map.
+		//This allocator will allow to place containers
+		//in managed shared memory segments
+		typedef allocator<ValueType, managed_shared_memory::segment_manager>
+			ShmemAllocator;
+		typedef map<KeyType, MappedType, std::less<KeyType>, ShmemAllocator> MyMap;
+
+		managed_shared_memory segment(open_only, sharedMapName);          //segment size in bytes
+		ShmemAllocator alloc_inst(segment.get_segment_manager());
+		
+		MyMap *mymap = segment.find<MyMap>(properMapName).first;
+
+		mymap->clear();
+
+
+		
+
+	}
+
+
+	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int, std::string> yourmap)
 	{
 		using namespace boost::interprocess;
 
@@ -64,9 +92,12 @@ extern "C"
 		/*for (int i = 0; i < 100; ++i) {
 			mymap->insert(std::pair<const int, float>(i, (float)i));
 		}*/
-
-		mymap->insert(std::pair<const int, std::string>(0, "booger"));
-		mymap->insert(std::pair<const int, std::string>(1, "boobs"));
+		for (auto it = yourmap.begin(); it != yourmap.end(); it++)
+		{
+			mymap->insert(std::pair<const int, std::string>(it->first, it->second));
+		}
+	//	mymap->insert(std::pair<const int, std::string>(0, "booger"));
+	//	mymap->insert(std::pair<const int, std::string>(1, "boobs"));
 
 
 	//	return 0;
@@ -98,7 +129,7 @@ extern "C"
 
 	}
 
-	__declspec(dllexport) void mapclient(char * sharedMapName, char * properMapName, std::map<int,std::string> &yourmap)
+	__declspec(dllexport) void getSharedMemoryMap(char * sharedMapName, char * properMapName, std::map<int,std::string> &yourmap)
 	{
 		using namespace boost::interprocess;
 		typedef int    KeyType;
