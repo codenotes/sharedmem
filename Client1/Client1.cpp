@@ -46,7 +46,8 @@ int main()
 	//host("boobs");
 	std::map<int, std::string> map1;
 	map1[0] = "map1";
-	setSharedMemoryMap("boobs1", map1);
+	setSharedMemoryMap("init", map1);
+	
 	map1[0] = "map2";
 	setSharedMemoryMap("boobs2", map1);
 	int c;

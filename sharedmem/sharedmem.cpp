@@ -7,6 +7,7 @@
 #include <boost/interprocess/allocators/allocator.hpp>
 #include <functional>
 #include <utility>
+#include <stdio.h>
 
 extern "C"
 {
@@ -57,6 +58,9 @@ extern "C"
 	{
 		using namespace boost::interprocess;
 		auto ln = yourmap.size();
+	//	char temp[256];
+//		sprintf(temp, "%d", ln);
+	//	MessageBoxA(0, "A", temp, MB_OK);
 		//Remove shared memory on construction and destruction
 		//struct shm_remove
 		//{ 
@@ -106,7 +110,7 @@ extern "C"
 		
 		for (auto it = yourmap.begin(); it != yourmap.end(); it++)
 		{
-			mymap->insert(std::pair<const int, std::string>(it->first, it->second));
+			mymap->insert(std::pair<const int, std::string>(it->first,  it->second));
 		}
 	//	mymap->insert(std::pair<const int, std::string>(0, "booger"));
 	//	mymap->insert(std::pair<const int, std::string>(1, "boobs"));
