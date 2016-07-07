@@ -8,6 +8,26 @@
 #include <functional>
 #include <utility>
 #include <stdio.h>
+#include <map>
+#include <sstream>
+#include <boost/serialization/map.hpp>
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/filesystem.hpp>
+#include <fstream>
+#include "..\include\sharedmem_classes.h"
+
+
+#ifdef WIN32
+#pragma data_seg ("SHARED")
+char sharedGlobalDirectoryName[512] = "c:\\temp\\";
+#pragma data_seg()
+#pragma comment(linker, "/section:SHARED,RWS")
+#else
+#pragma message("undone! need to devise shared memory for this platform")
+#error dunno
+char sharedGlobalDirectoryName[512] = "hello world";
+#endif
 
 extern "C"
 {
@@ -39,6 +59,7 @@ extern "C"
 
 	}
 
+
 	__declspec(dllexport) void initSharedMemoryMap(char * sharedMapName)
 	{
 		using namespace boost::interprocess;
@@ -54,7 +75,44 @@ extern "C"
 	}
 
 
+	__declspec(dllexport) void setSharedMemoryFileLocation(char * sharedMapFileName)
+	{
+		strcpy(sharedGlobalDirectoryName, sharedMapFileName);
+
+	}
+
+	__declspec(dllexport) void getSharedMemoryFileLocation(char * sharedMapFileName)
+	{
+		strcpy(sharedMapFileName, sharedGlobalDirectoryName);
+
+	}
+
+
 	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, std::map<int, std::string> yourmap)
+	{ 
+		boost::filesystem::path dir(sharedGlobalDirectoryName);
+		boost::filesystem::path file(sharedMapName);
+		boost::filesystem::path full_path = dir / file;
+
+		std::ofstream ofs(full_path.c_str());
+
+
+		//std::ifstream ifs("c:\\temp\\test.xxx");
+
+		
+		boost::archive::text_oarchive oarch(ofs);
+
+		oarch << yourmap;
+		ofs.close();
+
+		//std::map<int, int> new_map;
+		/*boost::archive::text_iarchive iarch(ifs);
+		iarch >> map2;
+		std::cout << map2[0] << std::endl;
+*/
+	}
+
+	__declspec(dllexport) void setSharedMemoryMap2(char * sharedMapName, std::map<int, std::string> yourmap)
 	{
 		using namespace boost::interprocess;
 		auto ln = yourmap.size();
@@ -147,6 +205,63 @@ extern "C"
 
 	__declspec(dllexport) void getSharedMemoryMap(char * sharedMapName, std::map<int, std::string> &yourmap)
 	{
+
+		boost::filesystem::path dir(sharedGlobalDirectoryName);
+		boost::filesystem::path file(sharedMapName);
+		boost::filesystem::path full_path = dir / file;
+
+		
+		//std::ofstream ofs("c:\\temp\\test.xxx");
+		std::ifstream ifs(full_path.c_str());
+		//std::map<int, int> new_map;
+		boost::archive::text_iarchive iarch(ifs);
+		iarch >> yourmap;
+
+	}
+
+	//
+	__declspec(dllexport) void deletePresetArrayFromMap( PresetMapStruct ** presetArray)
+	{
+		delete *presetArray;
+	}
+
+
+	__declspec(dllexport) void getPresetArrayFromMap(char * sharedMapName,  PresetMapStruct ** presetArray, int *size)
+	{
+		std::map<int, std::string> yourmap;
+		boost::filesystem::path dir(sharedGlobalDirectoryName);
+		boost::filesystem::path file(sharedMapName);
+		boost::filesystem::path full_path = dir / file;
+
+		std::istringstream iss;
+		std::ostringstream oss;
+		//boost::archive::text_oarchive oa(oss);
+				
+		//std::ofstream ofs("c:\\temp\\test.xxx");
+		std::ifstream ifs(full_path.c_str());
+		//std::map<int, int> new_map;
+		boost::archive::text_iarchive iarch(ifs);
+		iarch >> yourmap;
+		
+		*size= yourmap.size();
+		*presetArray = new PresetMapStruct[*size];
+		int i = 0;
+		for (auto it = yourmap.begin(); it != yourmap.end(); it++)
+		{
+
+			(*presetArray)[i].presetID = it->first;
+			strcpy((*presetArray)[i].name, it->second.c_str());
+			i++;
+		}
+
+
+
+	}
+
+
+
+	__declspec(dllexport) void getSharedMemoryMap2(char * sharedMapName, std::map<int, std::string> &yourmap)
+	{
 		using namespace boost::interprocess;
 		typedef int    KeyType;
 		typedef std::string  MappedType;
@@ -182,5 +297,52 @@ extern "C"
 		//MyVector *myvector = segment.find<MyVector>("MyVector").first;
 
 	}
+
+	__declspec(dllexport) void setSharedElement(char * sharedMapName, int index, std::string value)
+	{
+		std::map<int, std::string> m;
+		getSharedMemoryMap(sharedMapName, m);
+		m[index] = value;
+		setSharedMemoryMap(sharedMapName, m);
+
+
+
+	}
+	__declspec(dllexport) void getSharedElement(char * sharedMapName, int index, std::string &value)
+	{
+
+		std::map<int, std::string> m;
+		getSharedMemoryMap(sharedMapName, m);
+		value = m[index];
+
+
+
+	}
+
+
+	__declspec(dllexport) void setSharedElement2(char * sharedMapName, int index, char * value)
+	{
+
+		std::string s = value;
+		setSharedElement(sharedMapName, index, value);
+
+	}
+	__declspec(dllexport) void getSharedElement2(char * sharedMapName, int index, char * value, int * size)
+	{
+
+		std::string s; 
+
+		getSharedElement(sharedMapName, index, s);
+		strcpy(value, s.c_str());
+		*size = s.size();
+
+
+		
+
+
+	}
+
+
+
 
 }
