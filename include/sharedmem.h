@@ -29,7 +29,7 @@ extern "C"
 	void setSharedElement(char * sharedMapName, int index, std::string value);
 	void getSharedElement(char * sharedMapName, int index, std::string &value);
 	void setSharedElement2(char * sharedMapName, int index, char * value);
-	void getSharedElement2(char * sharedMapName, int index, char * value);
+	void getSharedElement2(char * sharedMapName, int index, char * value,int *size);
 	void getPresetArrayFromMap(char * sharedMapName, PresetMapStruct ** presetArray, int * size);
 	void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size);
 	void deletePresetArrayFromMap(PresetMapStruct ** presetArray);

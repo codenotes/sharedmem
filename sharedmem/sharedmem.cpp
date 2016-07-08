@@ -39,8 +39,9 @@ extern "C"
 
 	__declspec(dllexport) void clearmap(char * sharedMapName, char * properMapName)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
+
 		using namespace boost::interprocess;
 		typedef int    KeyType;
 		typedef std::string  MappedType;
@@ -68,8 +69,8 @@ extern "C"
 
 	__declspec(dllexport) void initSharedMemoryMap(char * sharedMapName)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 		using namespace boost::interprocess;
 
 		//Remove shared memory on construction and destruction
@@ -85,16 +86,18 @@ extern "C"
 
 	__declspec(dllexport) void setSharedMemoryFileLocation(char * sharedMapFileName)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
+
 		strcpy(sharedGlobalDirectoryName, sharedMapFileName);
 
 	}
 
 	__declspec(dllexport) void getSharedMemoryFileLocation(char * sharedMapFileName)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
+
 		strcpy(sharedMapFileName, sharedGlobalDirectoryName);
 
 	}
@@ -102,8 +105,7 @@ extern "C"
 
 	__declspec(dllexport) void setSharedMemoryMap(char * sharedMapName, std::map<int, std::string> yourmap)
 	{ 
-		boost::mutex::scoped_lock
-			lock(io_mutex3);
+		boost::mutex::scoped_lock lock(io_mutex);
 
 		boost::filesystem::path dir(sharedGlobalDirectoryName);
 		boost::filesystem::path file(sharedMapName);
@@ -127,10 +129,10 @@ extern "C"
 */
 	}
 
-	__declspec(dllexport) void setSharedMemoryMap2(char * sharedMapName, std::map<int, std::string> yourmap)
+	__declspec(dllexport) void setSharedMemoryMap2_deprecated(char * sharedMapName, std::map<int, std::string> yourmap)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		using namespace boost::interprocess;
 		auto ln = yourmap.size();
@@ -197,8 +199,8 @@ extern "C"
 
 	__declspec(dllexport) void addToSharedMap(int index, std::string property, char * sharedMapName, char * properMapName)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		using namespace boost::interprocess;
 		typedef int    KeyType;
@@ -226,8 +228,9 @@ extern "C"
 
 	__declspec(dllexport) void getSharedMemoryMap(char * sharedMapName, std::map<int, std::string> &yourmap)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex3);
+		boost::mutex::scoped_lock lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex3);
 
 		boost::filesystem::path dir(sharedGlobalDirectoryName);
 		boost::filesystem::path file(sharedMapName);
@@ -253,16 +256,16 @@ extern "C"
 	//
 	__declspec(dllexport) void deletePresetArrayFromMap( PresetMapStruct ** presetArray)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		delete *presetArray;
 	}
 
 	__declspec(dllexport) void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		std::map<int, std::string> mp;
 
@@ -277,8 +280,8 @@ extern "C"
 
 	__declspec(dllexport) void getPresetArrayFromMap(char * sharedMapName,  PresetMapStruct ** presetArray, int *size)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		std::map<int, std::string> yourmap;
 		boost::filesystem::path dir(sharedGlobalDirectoryName);
@@ -321,10 +324,10 @@ extern "C"
 
 
 
-	__declspec(dllexport) void getSharedMemoryMap2(char * sharedMapName, std::map<int, std::string> &yourmap)
+	__declspec(dllexport) void getSharedMemoryMap2_deprecated(char * sharedMapName, std::map<int, std::string> &yourmap)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		using namespace boost::interprocess;
 		typedef int    KeyType;
@@ -364,8 +367,8 @@ extern "C"
 
 	__declspec(dllexport) void setSharedElement(char * sharedMapName, int index, std::string value)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex2);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex2);
 
 		std::map<int, std::string> m;
 		getSharedMemoryMap(sharedMapName, m);
@@ -377,8 +380,8 @@ extern "C"
 	}
 	__declspec(dllexport) void getSharedElement(char * sharedMapName, int index, std::string &value)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		std::map<int, std::string> m;
 		getSharedMemoryMap(sharedMapName, m);
@@ -391,8 +394,7 @@ extern "C"
 
 	__declspec(dllexport) void setSharedElement2(char * sharedMapName, int index, char * value)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock lock(io_mutex);
 
 		std::string s = value;
 		setSharedElement(sharedMapName, index, value);
@@ -400,8 +402,8 @@ extern "C"
 	}
 	__declspec(dllexport) void getSharedElement2(char * sharedMapName, int index, char * value, int * size)
 	{
-		boost::mutex::scoped_lock
-			lock(io_mutex);
+		//boost::mutex::scoped_lock
+		//	lock(io_mutex);
 
 		std::string s; 
 
