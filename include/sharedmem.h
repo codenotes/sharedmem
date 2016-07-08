@@ -31,6 +31,7 @@ extern "C"
 	void setSharedElement2(char * sharedMapName, int index, char * value);
 	void getSharedElement2(char * sharedMapName, int index, char * value);
 	void getPresetArrayFromMap(char * sharedMapName, PresetMapStruct ** presetArray, int * size);
+	void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size);
 	void deletePresetArrayFromMap(PresetMapStruct ** presetArray);
 }
 
