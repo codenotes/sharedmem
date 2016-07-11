@@ -158,7 +158,7 @@ extern "C"
 		typedef std::string  MappedType;
 		typedef std::pair<const int, std::string> ValueType;
 
-		//Alias an STL compatible allocator of for the map.
+		//Alias an STL  compatible allocator of for the map.
 		//This allocator will allow to place containers
 		//in managed shared memory segments
 		typedef allocator<ValueType, managed_shared_memory::segment_manager>
@@ -277,6 +277,9 @@ extern "C"
 		setSharedMemoryMap("presets", mp);
 
 	}
+
+
+
 
 	__declspec(dllexport) void getPresetArrayFromMap(char * sharedMapName,  PresetMapStruct ** presetArray, int *size)
 	{
