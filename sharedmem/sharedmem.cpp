@@ -17,6 +17,9 @@
 #include <fstream>
 #include "..\include\sharedmem_classes.h"
 #include <boost/thread/mutex.hpp>
+#include <boost/foreach.hpp> 
+#include <boost/algorithm/string.hpp>
+#include <vector>
 
 
 boost::mutex io_mutex;
@@ -36,6 +39,9 @@ char sharedGlobalDirectoryName[512] = "hello world";
 
 extern "C"
 {
+
+
+
 
 	__declspec(dllexport) void clearmap(char * sharedMapName, char * properMapName)
 	{
@@ -274,7 +280,7 @@ extern "C"
 			mp[presetArray[i].presetID] = presetArray[i].name;
 		}
 
-		setSharedMemoryMap("presets", mp);
+		setSharedMemoryMap(sharedMapName, mp);
 
 	}
 
@@ -325,7 +331,38 @@ extern "C"
 
 	}
 
+	__declspec(dllexport) void getPresetArrayFromMapMulti(char * soundfont, PresetMapStruct ** presetArray, int *size)
+	{
 
+		namespace fs = boost::filesystem;
+
+		fs::path targetDir(sharedGlobalDirectoryName);
+
+		fs::directory_iterator it(targetDir), eod;
+
+	/*	BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
+		{
+			if (fs::is_regular_file(p))
+			{
+
+				std::vector<std::string> strs;
+				boost::split(strs, p.filename(), boost::is_any_of("~"));
+
+				auto sfname = strs[1];
+				auto sfid = strs[2];
+
+				if (sfname == soundfont)
+				{
+
+					getPresetArrayFromMap((char*)p.filename().string().c_str(), presetArray, size);
+
+				}
+
+			}
+		}
+*/
+
+	}
 
 	__declspec(dllexport) void getSharedMemoryMap2_deprecated(char * sharedMapName, std::map<int, std::string> &yourmap)
 	{
@@ -393,6 +430,11 @@ extern "C"
 
 
 	}
+
+
+
+
+
 
 
 	__declspec(dllexport) void setSharedElement2(char * sharedMapName, int index, char * value)
