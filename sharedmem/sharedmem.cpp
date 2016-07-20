@@ -124,7 +124,7 @@ extern "C"
 
 		
 		boost::archive::text_oarchive oarch(ofs);
-
+		//try catch here would be good.
 		oarch << yourmap;
 		ofs.close();
 
