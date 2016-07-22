@@ -340,13 +340,16 @@ extern "C"
 
 		fs::directory_iterator it(targetDir), eod;
 
-	/*	BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
+		BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
 		{
 			if (fs::is_regular_file(p))
 			{
 
 				std::vector<std::string> strs;
-				boost::split(strs, p.filename(), boost::is_any_of("~"));
+				boost::split(strs, p.filename().string(), boost::is_any_of("~"));
+
+				if (strs.size() <= 1) //this is old-style singuler file.  Ignore it.
+					continue;
 
 				auto sfname = strs[1];
 				auto sfid = strs[2];
@@ -355,12 +358,12 @@ extern "C"
 				{
 
 					getPresetArrayFromMap((char*)p.filename().string().c_str(), presetArray, size);
-
+					 
 				}
 
 			}
 		}
-*/
+
 
 	}
 
