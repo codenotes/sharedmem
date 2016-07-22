@@ -33,6 +33,7 @@ extern "C"
 	void getPresetArrayFromMap(char * sharedMapName, PresetMapStruct ** presetArray, int * size);
 	void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size);
 	void deletePresetArrayFromMap(PresetMapStruct ** presetArray);
+	void getPresetArrayFromMapMulti(char * soundfont, PresetMapStruct ** presetArray, int *size);
 }
 
 
