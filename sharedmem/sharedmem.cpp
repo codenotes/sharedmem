@@ -331,6 +331,43 @@ extern "C"
 
 	}
 
+
+	__declspec(dllexport) bool SFLoadedFileCheck(char * soundfont)
+	{
+		namespace fs = boost::filesystem;
+
+		fs::path targetDir(sharedGlobalDirectoryName);
+
+		fs::directory_iterator it(targetDir), eod;
+
+
+		BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
+		{
+			if (fs::is_regular_file(p))
+			{
+				//
+				std::vector<std::string> strs;
+				boost::split(strs, p.filename().string(), boost::is_any_of("~"));
+				//
+				if (strs.size() <= 1)
+					continue;
+
+				auto sfname = strs[1];
+
+				if (sfname == soundfont)
+				{
+					return true;
+				}
+
+
+			}
+
+		}
+
+		return false;
+	}
+
+
 	__declspec(dllexport) void getPresetArrayFromMapMulti(char * soundfont, PresetMapStruct ** presetArray, int *size)
 	{
 

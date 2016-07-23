@@ -34,6 +34,7 @@ extern "C"
 	void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size);
 	void deletePresetArrayFromMap(PresetMapStruct ** presetArray);
 	void getPresetArrayFromMapMulti(char * soundfont, PresetMapStruct ** presetArray, int *size);
+	bool SFLoadedFileCheck(char * soundfont);
 }
 
 
