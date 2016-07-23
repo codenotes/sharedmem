@@ -122,11 +122,18 @@ extern "C"
 
 		//std::ifstream ifs("c:\\temp\\test.xxx");
 
-		
-		boost::archive::text_oarchive oarch(ofs);
+		try
+		{
+			boost::archive::text_oarchive oarch(ofs);
+			oarch << yourmap;
+			ofs.close();
+		}
+		catch (...)
+		{
+			printf("%s: location does not exist.\n", __FUNCTION__);
+		}
 		//try catch here would be good.
-		oarch << yourmap;
-		ofs.close();
+
 
 		//std::map<int, int> new_map;
 		/*boost::archive::text_iarchive iarch(ifs);
