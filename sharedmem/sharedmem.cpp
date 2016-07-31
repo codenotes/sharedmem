@@ -19,6 +19,7 @@
 #include <boost/thread/mutex.hpp>
 #include <boost/foreach.hpp> 
 #include <boost/algorithm/string.hpp>
+#include <boost/lexical_cast.hpp>
 #include <vector>
 
 
@@ -37,10 +38,16 @@ char sharedGlobalDirectoryName[512] = "c:\\temp\\";
 char sharedGlobalDirectoryName[512] = "hello world";
 #endif
 
+
+//helpers for the extern "C" functions, not called directly
+
+
+
+//end helpers
+
+
 extern "C"
 {
-
-
 
 
 	__declspec(dllexport) void clearmap(char * sharedMapName, char * properMapName)
@@ -292,8 +299,6 @@ extern "C"
 	}
 
 
-
-
 	__declspec(dllexport) void getPresetArrayFromMap(char * sharedMapName,  PresetMapStruct ** presetArray, int *size)
 	{
 		//boost::mutex::scoped_lock
@@ -375,6 +380,82 @@ extern "C"
 	}
 
 
+	__declspec(dllexport) bool findSFFileAndIDFromName(char * soundfont, std::string &fname, int *sfID)
+	{
+
+		namespace fs = boost::filesystem;
+
+		fs::path targetDir(sharedGlobalDirectoryName);
+		fs::directory_iterator it(targetDir), eod;
+
+
+		BOOST_FOREACH(fs::path const &p, std::make_pair(it, eod))
+		{
+			if (fs::is_regular_file(p))
+			{
+				//
+				std::vector<std::string> strs;
+				boost::split(strs, p.filename().string(), boost::is_any_of("~"));
+				//
+				if (strs.size() <= 1)
+					continue;
+
+				auto sfname = strs[1];
+				auto sfid = strs[2];
+
+				if (sfname == soundfont)
+				{
+					*sfID = boost::lexical_cast<int>(sfid);
+					fname = p.string();
+					
+					return true;
+
+				}
+
+			}
+		}
+
+
+
+		return false;
+	}
+
+
+
+	//helper that finds full name of loaded soundfont on disk
+
+	__declspec(dllexport) bool deletePresetMulti(char * soundfont)
+	{
+		int sfID=0;
+		std::string fname;
+
+		if (findSFFileAndIDFromName(soundfont, fname, &sfID))
+		{
+			boost::filesystem::remove(boost::filesystem::path(fname));
+			return true;
+		}
+
+		return false;
+
+	}
+
+	__declspec(dllexport) int getSFID(char * soundfont)
+	{
+
+		int sfID=0;
+		std::string fname;
+
+		if (findSFFileAndIDFromName(soundfont, fname, &sfID))
+		{
+			return sfID;
+
+		}
+		else
+			return -1;
+		
+
+	}
+	
 	__declspec(dllexport) void getPresetArrayFromMapMulti(char * soundfont, PresetMapStruct ** presetArray, int *size)
 	{
 
@@ -478,12 +559,6 @@ extern "C"
 
 
 	}
-
-
-
-
-
-
 
 	__declspec(dllexport) void setSharedElement2(char * sharedMapName, int index, char * value)
 	{
