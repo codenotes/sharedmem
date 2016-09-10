@@ -282,6 +282,14 @@ extern "C"
 		delete *presetArray;
 	}
 
+
+/*
+	def make(pre, bank) :
+		return (pre << 8) + bank
+
+		def unmake(key) :
+		return[key >> 8, key & 127]*/
+
 	__declspec(dllexport) void setPresetArrayFromMap(char * sharedMapName, PresetMapStruct * presetArray, int size)
 	{
 		//boost::mutex::scoped_lock
@@ -291,7 +299,11 @@ extern "C"
 
 		for (int i = 0; i < size; i++)
 		{
-			mp[presetArray[i].presetID] = presetArray[i].name;
+			int key;
+			key = (presetArray[i].presetID << 8) + presetArray[i].bank;
+//			mp[presetArray[i].presetID] = presetArray[i].name;
+			mp[key] = presetArray[i].name;
+
 		}
 
 		setSharedMemoryMap(sharedMapName, mp);
@@ -331,10 +343,20 @@ extern "C"
 		*size= yourmap.size();
 		*presetArray = new PresetMapStruct[*size];
 		int i = 0;
+		int pre, bank;
+
 		for (auto it = yourmap.begin(); it != yourmap.end(); it++)
 		{
 
-			(*presetArray)[i].presetID = it->first;
+			//return[key >> 8, key & 127] 
+			int bullshit = it->first;
+
+			pre = it->first >> 8;
+			bank = it->first & 127;
+
+			//(*presetArray)[i].presetID = it->first;
+			(*presetArray)[i].presetID = pre;
+			(*presetArray)[i].bank = bank;
 			strcpy((*presetArray)[i].name, it->second.c_str());
 			i++;
 		}

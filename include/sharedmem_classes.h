@@ -18,4 +18,5 @@ struct PresetMapStruct
 #define REMOVE_PRESET 0x67
 #define TEST_SYSEX 0x68
 #define ASSIGNPRESETS_2 0x69
+#define ASSIGNPRESETS_3 0x64
 #define SET_GAIN 0x65
