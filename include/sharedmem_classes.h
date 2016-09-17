@@ -20,3 +20,4 @@ struct PresetMapStruct
 #define ASSIGNPRESETS_2 0x69
 #define ASSIGNPRESETS_3 0x64
 #define SET_GAIN 0x65
+#define UNLOAD_PRESET 0x63
